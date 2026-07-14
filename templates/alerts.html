@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Alerts – CropGuard AI{% endblock %}
+{% block page_title %}Disease & Weather Alerts{% endblock %}
+{% block content %}
+<div class="card">
+  {% if alerts %}
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    {% for alert in alerts %}
+    <div style="display:flex;gap:14px;padding:16px;border-radius:12px;border:1px solid {% if alert.severity=='high' %}#fecdd3{% elif alert.severity=='medium' %}#fde68a{% else %}#bbf7d0{% endif %};background:{% if alert.severity=='high' %}#fff1f2{% elif alert.severity=='medium' %}#fffbeb{% else %}#f0fdf4{% endif %};">
+      <div style="font-size:24px;">
+        {% if alert.alert_type == 'disease' %}🔬{% elif alert.alert_type == 'weather' %}🌩{% else %}⏰{% endif %}
+      </div>
+      <div style="flex:1;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:15px;font-weight:700;">{{ alert.title }}</div>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span class="badge-pill badge-{{ alert.severity }}">{{ alert.severity|upper }}</span>
+            <span style="font-size:12px;color:#6b7280;">{{ alert.created_at|fshort }}</span>
+          </div>
+        </div>
+        <p style="font-size:14px;color:#374151;margin-top:6px;line-height:1.6;">{{ alert.message }}</p>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-bell"></i>
+    <h3>No Alerts</h3>
+    <p>You're all clear! No disease or weather alerts at the moment.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

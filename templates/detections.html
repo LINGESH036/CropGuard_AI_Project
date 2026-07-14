@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Detection History – CropGuard AI{% endblock %}
+{% block page_title %}Detection History{% endblock %}
+{% block content %}
+<div class="section-header">
+  <div class="section-title">All Disease Scans</div>
+  <a href="{{ url_for('detect') }}" class="btn btn-primary"><i class="fas fa-plus"></i> New Scan</a>
+</div>
+<div class="card">
+  {% if detections %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Disease Detected</th>
+          <th>Crop</th>
+          <th>Confidence</th>
+          <th>Severity</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for d in detections %}
+        <tr>
+          <td>
+            {% if d.image_path %}
+            <img src="{{ url_for('static', filename=d.image_path) }}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;">
+            {% else %}
+            <div style="width:48px;height:48px;background:#f0fdf4;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;">🌿</div>
+            {% endif %}
+          </td>
+          <td><strong>{{ d.disease_detected }}</strong></td>
+          <td><span class="tag">{{ d.crop_type|title }}</span></td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="progress-bar" style="width:60px;">
+                <div class="progress-fill {% if d.confidence_score > 85 %}progress-green{% elif d.confidence_score > 70 %}progress-yellow{% else %}progress-red{% endif %}" style="width:{{ d.confidence_score }}%;"></div>
+              </div>
+              <span style="font-size:13px;font-weight:600;">{{ d.confidence_score }}%</span>
+            </div>
+          </td>
+          <td><span class="badge-pill badge-{{ d.severity }}">{{ d.severity|upper }}</span></td>
+          <td style="font-size:13px;color:#6b7280;">{{ d.detected_at|fdt }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-microscope"></i>
+    <h3>No Detections Yet</h3>
+    <p>Upload your first leaf image to detect diseases.</p>
+    <a href="{{ url_for('detect') }}" class="btn btn-primary" style="margin-top:16px;"><i class="fas fa-camera"></i> Start Detecting</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

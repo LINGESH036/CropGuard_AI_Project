@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ disease.name }} – CropGuard AI{% endblock %}
+{% block page_title %}{{ disease.name }}{% endblock %}
+{% block content %}
+<div style="max-width:800px;">
+  <div style="margin-bottom:16px;">
+    <a href="{{ url_for('diseases') }}" style="color:#16a34a;text-decoration:none;font-size:14px;"><i class="fas fa-arrow-left"></i> Back to Library</a>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+      <div style="font-size:13px;font-weight:700;color:#6b7280;">CROP TYPE: {{ disease.crop_type }}</div>
+      <span class="badge-pill badge-{{ disease.severity_level }}">{{ disease.severity_level|upper }} SEVERITY</span>
+    </div>
+    <h2 style="font-size:24px;font-weight:800;margin-bottom:12px;">{{ disease.name }}</h2>
+    <p style="font-size:15px;line-height:1.7;color:#374151;">{{ disease.description }}</p>
+  </div>
+  <div class="grid-2" style="margin-bottom:16px;">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-exclamation-triangle" style="color:#f59e0b;"></i> Causes</div>
+      <p style="font-size:14px;color:#374151;line-height:1.7;">{{ disease.causes }}</p>
+    </div>
+    <div class="card">
+      <div class="card-title"><i class="fas fa-search" style="color:#3b82f6;"></i> Symptoms</div>
+      <p style="font-size:14px;color:#374151;line-height:1.7;">{{ disease.symptoms }}</p>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title"><i class="fas fa-pills" style="color:#dc2626;"></i> Chemical Treatment</div>
+    <p style="font-size:14px;color:#374151;line-height:1.7;">{{ disease.chemical_treatment }}</p>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title"><i class="fas fa-leaf" style="color:#16a34a;"></i> Organic Treatment</div>
+    <p style="font-size:14px;color:#374151;line-height:1.7;">{{ disease.organic_treatment }}</p>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fas fa-shield-alt" style="color:#8b5cf6;"></i> Prevention Guidelines</div>
+    <p style="font-size:14px;color:#374151;line-height:1.7;">{{ disease.prevention }}</p>
+  </div>
+</div>
+{% endblock %}

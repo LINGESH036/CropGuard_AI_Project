@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Disease Library – CropGuard AI{% endblock %}
+{% block page_title %}Disease Library{% endblock %}
+{% block content %}
+<div class="section-header">
+  <div class="section-title">Disease Database</div>
+  {% if session.get('role') == 'admin' %}
+  <a href="{{ url_for('add_disease') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Disease</a>
+  {% endif %}
+</div>
+
+<form method="GET" style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+  <input type="text" name="search" value="{{ search }}" class="form-control" placeholder="Search diseases..." style="max-width:300px;">
+  <select name="crop" class="form-control" style="max-width:200px;">
+    <option value="">All Crops</option>
+    <option value="Rice" {% if crop_filter=='Rice'%}selected{% endif %}>Rice</option>
+    <option value="Tomato" {% if crop_filter=='Tomato'%}selected{% endif %}>Tomato</option>
+    <option value="Cotton" {% if crop_filter=='Cotton'%}selected{% endif %}>Cotton</option>
+    <option value="Multiple" {% if crop_filter=='Multiple'%}selected{% endif %}>Multiple</option>
+  </select>
+  <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Search</button>
+  {% if search or crop_filter %}
+  <a href="{{ url_for('diseases') }}" class="btn btn-outline">Clear</a>
+  {% endif %}
+</form>
+
+{% if diseases %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">
+  {% for d in diseases %}
+  <div class="card" style="border-left:4px solid {% if d.severity_level=='high' %}#dc2626{% elif d.severity_level=='medium' %}#f59e0b{% else %}#16a34a{% endif %};">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+      <div>
+        <div style="font-size:16px;font-weight:700;">{{ d.name }}</div>
+        <span class="tag" style="margin-top:4px;">{{ d.crop_type }}</span>
+      </div>
+      <span class="badge-pill badge-{{ d.severity_level }}">{{ d.severity_level|upper }}</span>
+    </div>
+    <p style="font-size:13px;color:#6b7280;line-height:1.5;margin-bottom:14px;">{{ d.description[:120] }}...</p>
+    <a href="{{ url_for('disease_detail', disease_id=d.id) }}" class="btn btn-outline btn-sm"><i class="fas fa-eye"></i> View Details</a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card">
+  <div class="empty-state">
+    <i class="fas fa-book-medical"></i>
+    <h3>No Diseases Found</h3>
+    <p>Try a different search term.</p>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

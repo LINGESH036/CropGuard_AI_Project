@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Login – CropGuard AI{% endblock %}
+{% block guest_area %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);padding:20px;">
+  <div style="background:white;border-radius:20px;padding:48px;width:100%;max-width:440px;box-shadow:0 20px 60px rgba(22,163,74,0.15);border:1px solid #d1fae5;">
+    <div style="text-align:center;margin-bottom:36px;">
+      <div style="width:60px;height:60px;background:#16a34a;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">🌿</div>
+      <h1 style="font-size:26px;font-weight:800;color:#1a2e1a;">Welcome Back</h1>
+      <p style="color:#6b7280;font-size:14px;margin-top:6px;">Sign in to CropGuard AI</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}" style="margin-bottom:16px;">
+        <i class="fas fa-{% if category == 'success' %}check-circle{% else %}exclamation-circle{% endif %}"></i> {{ message }}
+      </div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <div style="position:relative;">
+          <i class="fas fa-user" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:14px;"></i>
+          <input type="text" name="username" class="form-control" style="padding-left:40px;" placeholder="Enter username" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div style="position:relative;">
+          <i class="fas fa-lock" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);color:#9ca3af;font-size:14px;"></i>
+          <input type="password" name="password" class="form-control" style="padding-left:40px;" placeholder="Enter password" required>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:8px;">
+        <i class="fas fa-sign-in-alt"></i> Sign In
+      </button>
+    </form>
+
+    <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid #f0fdf4;">
+      <p style="font-size:14px;color:#6b7280;">Don't have an account? <a href="{{ url_for('register') }}" style="color:#16a34a;font-weight:600;text-decoration:none;">Register here</a></p>
+    </div>
+
+    <div style="margin-top:20px;padding:14px;background:#f0fdf4;border-radius:10px;font-size:12px;color:#6b7280;text-align:center;">
+      <strong>Demo:</strong> admin/admin123 &nbsp;|&nbsp; expert1/expert123
+    </div>
+  </div>
+</div>
+{% endblock %}

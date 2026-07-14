@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Add Crop – CropGuard AI{% endblock %}
+{% block page_title %}Add New Crop{% endblock %}
+{% block content %}
+<div style="max-width:600px;">
+<div class="card">
+  <div class="card-title"><i class="fas fa-plus-circle" style="color:#16a34a;"></i> Crop Details</div>
+  <form method="POST">
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Crop Name *</label>
+        <select name="crop_name" class="form-control" required>
+          <option value="">Select crop</option>
+          <option value="Rice">🌾 Rice</option>
+          <option value="Tomato">🍅 Tomato</option>
+          <option value="Cotton">🌸 Cotton</option>
+          <option value="Wheat">🌾 Wheat</option>
+          <option value="Maize">🌽 Maize</option>
+          <option value="Sugarcane">🎋 Sugarcane</option>
+          <option value="Groundnut">🥜 Groundnut</option>
+          <option value="Soybean">🫘 Soybean</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Variety</label>
+        <input type="text" name="variety" class="form-control" placeholder="e.g., IR64, Ponni">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Growth Stage</label>
+        <select name="growth_stage" class="form-control">
+          <option value="">Select stage</option>
+          <option value="Seedling">Seedling</option>
+          <option value="Vegetative">Vegetative</option>
+          <option value="Flowering">Flowering</option>
+          <option value="Fruiting">Fruiting</option>
+          <option value="Harvesting">Harvesting</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Field Size (acres)</label>
+        <input type="number" name="field_size" class="form-control" step="0.1" min="0" placeholder="0.0">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Planting Date</label>
+        <input type="date" name="planting_date" class="form-control">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location / Field</label>
+        <input type="text" name="location" class="form-control" placeholder="Field A, North block...">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes</label>
+      <textarea name="notes" class="form-control" placeholder="Any additional notes about this crop..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Crop</button>
+      <a href="{{ url_for('crops') }}" class="btn btn-outline"><i class="fas fa-times"></i> Cancel</a>
+    </div>
+  </form>
+</div>
+</div>
+{% endblock %}

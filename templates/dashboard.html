@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Dashboard – CropGuard AI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-seedling"></i></div>
+    <div>
+      <div class="stat-val">{{ total_crops }}</div>
+      <div class="stat-label">Active Crops</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-microscope"></i></div>
+    <div>
+      <div class="stat-val">{{ total_detections }}</div>
+      <div class="stat-label">Total Scans</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fee2e2;color:#dc2626;"><i class="fas fa-virus"></i></div>
+    <div>
+      <div class="stat-val">{{ high_risk }}</div>
+      <div class="stat-label">High Risk Detections</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dbeafe;color:#3b82f6;"><i class="fas fa-comments"></i></div>
+    <div>
+      <div class="stat-val">{{ open_queries }}</div>
+      <div class="stat-label">Open Queries</div>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:24px;">
+  <!-- Quick Actions -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-bolt" style="color:#f59e0b;"></i> Quick Actions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <a href="{{ url_for('detect') }}" class="btn btn-primary" style="justify-content:center;">
+        <i class="fas fa-camera"></i> Detect Disease
+      </a>
+      <a href="{{ url_for('add_crop') }}" class="btn btn-outline" style="justify-content:center;">
+        <i class="fas fa-plus"></i> Add Crop
+      </a>
+      <a href="{{ url_for('weather') }}" class="btn btn-outline" style="justify-content:center;">
+        <i class="fas fa-cloud-sun"></i> Weather Check
+      </a>
+      <a href="{{ url_for('consult') }}" class="btn btn-outline" style="justify-content:center;">
+        <i class="fas fa-user-md"></i> Ask Expert
+      </a>
+    </div>
+
+    {% if weather %}
+    <div style="margin-top:20px;padding:16px;background:#f0fdf4;border-radius:12px;border:1px solid #d1fae5;">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:#15803d;">
+        <i class="fas fa-cloud-sun"></i> Latest Weather
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <span style="font-size:13px;"><i class="fas fa-thermometer-half" style="color:#ef4444;"></i> {{ weather.temperature }}°C</span>
+        <span style="font-size:13px;"><i class="fas fa-tint" style="color:#3b82f6;"></i> {{ weather.humidity }}% RH</span>
+        <span style="font-size:13px;"><i class="fas fa-wind" style="color:#6b7280;"></i> {{ weather.wind_speed }} km/h</span>
+        <span class="badge-pill badge-{{ weather.disease_risk }}">{{ weather.disease_risk|upper }} RISK</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Recent Detections -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-history" style="color:#16a34a;"></i> Recent Detections
+      <a href="{{ url_for('detections') }}" style="margin-left:auto;font-size:13px;color:#16a34a;text-decoration:none;font-weight:500;">View all →</a>
+    </div>
+    {% if detections %}
+    {% for d in detections %}
+    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0fdf4;">
+      <div style="width:38px;height:38px;border-radius:10px;background:#f0fdf4;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">
+        {{ '🌾' if d.crop_type == 'rice' else '🍅' if d.crop_type == 'tomato' else '🌱' }}
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ d.disease_detected }}</div>
+        <div style="font-size:12px;color:#6b7280;">{{ d.crop_type|title }} • {{ d.detected_at|fdate }}</div>
+      </div>
+      <span class="badge-pill badge-{{ d.severity }}">{{ d.confidence_score }}%</span>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state" style="padding:30px 0;">
+      <i class="fas fa-camera" style="font-size:32px;margin-bottom:8px;"></i>
+      <p style="font-size:14px;">No detections yet. <a href="{{ url_for('detect') }}" style="color:#16a34a;">Scan your first crop</a></p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Disease Info Banner -->
+<div class="card" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white;border:none;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;">
+    <div>
+      <h3 style="font-size:18px;font-weight:700;margin-bottom:6px;">🔬 AI Disease Detection Ready</h3>
+      <p style="font-size:14px;opacity:0.85;">Upload a leaf image to get instant disease diagnosis with treatment recommendations. Supports Rice, Tomato, Cotton, and more.</p>
+    </div>
+    <a href="{{ url_for('detect') }}" style="background:white;color:#16a34a;padding:12px 24px;border-radius:10px;font-weight:700;text-decoration:none;white-space:nowrap;">
+      <i class="fas fa-camera"></i> Detect Now
+    </a>
+  </div>
+</div>
+
+{% endblock %}

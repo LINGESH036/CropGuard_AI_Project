@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Detect Disease – CropGuard AI{% endblock %}
+{% block page_title %}AI Disease Detection{% endblock %}
+{% block content %}
+
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><i class="fas fa-camera" style="color:#16a34a;"></i> Upload Leaf Image</div>
+    <form method="POST" enctype="multipart/form-data" id="detectForm">
+      <div class="form-group">
+        <label class="form-label">Select Crop Type</label>
+        <select name="crop_type" class="form-control" required>
+          <option value="">-- Choose Crop --</option>
+          <option value="rice">🌾 Rice (Paddy)</option>
+          <option value="tomato">🍅 Tomato</option>
+          <option value="cotton">🌸 Cotton</option>
+          <option value="wheat">🌾 Wheat</option>
+          <option value="maize">🌽 Maize/Corn</option>
+          <option value="sugarcane">🎋 Sugarcane</option>
+          <option value="default">Other Crops</option>
+        </select>
+      </div>
+      {% if crops %}
+      <div class="form-group">
+        <label class="form-label">Link to My Crop (Optional)</label>
+        <select name="crop_id" class="form-control">
+          <option value="">-- Select Crop Record --</option>
+          {% for c in crops %}
+          <option value="{{ c.id }}">{{ c.crop_name }} – {{ c.location or 'No location' }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endif %}
+      <div class="form-group">
+        <label class="form-label">Leaf Image</label>
+        <div id="dropZone" style="border:2px dashed #d1fae5;border-radius:12px;padding:32px;text-align:center;cursor:pointer;transition:all 0.2s;background:#f9fffe;" onclick="document.getElementById('imageInput').click()">
+          <div id="dropContent">
+            <i class="fas fa-cloud-upload-alt" style="font-size:40px;color:#16a34a;margin-bottom:12px;display:block;"></i>
+            <div style="font-size:15px;font-weight:600;margin-bottom:4px;">Click to upload or drag & drop</div>
+            <div style="font-size:13px;color:#6b7280;">JPG, PNG, JPEG – Max 16MB</div>
+          </div>
+          <img id="previewImg" style="display:none;max-width:100%;max-height:200px;border-radius:8px;" />
+        </div>
+        <input type="file" id="imageInput" name="image" accept="image/*" style="display:none;" onchange="previewImage(this)">
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" id="submitBtn">
+        <i class="fas fa-microscope"></i> Analyze Image with AI
+      </button>
+    </form>
+  </div>
+
+  <div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title"><i class="fas fa-info-circle" style="color:#3b82f6;"></i> How It Works</div>
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#16a34a;flex-shrink:0;">1</div>
+          <div><div style="font-weight:600;font-size:14px;">Upload a clear leaf photo</div><div style="font-size:13px;color:#6b7280;">Focus on the diseased part of the leaf</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#16a34a;flex-shrink:0;">2</div>
+          <div><div style="font-weight:600;font-size:14px;">AI analyzes the image</div><div style="font-size:13px;color:#6b7280;">CNN model processes visual features</div></div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div style="width:32px;height:32px;background:#dcfce7;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#16a34a;flex-shrink:0;">3</div>
+          <div><div style="font-weight:600;font-size:14px;">Get instant diagnosis</div><div style="font-size:13px;color:#6b7280;">Disease name, severity, and treatment plan</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="fas fa-leaf" style="color:#16a34a;"></i> Detectable Diseases</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;">
+        <span class="tag">Rice Blast</span>
+        <span class="tag">Bacterial Blight</span>
+        <span class="tag">Brown Spot</span>
+        <span class="tag">Early Blight</span>
+        <span class="tag">Late Blight</span>
+        <span class="tag">Leaf Curl Virus</span>
+        <span class="tag">Powdery Mildew</span>
+        <span class="tag">Rust Disease</span>
+        <span class="tag">Sheath Blight</span>
+        <span class="tag">Cercospora Spot</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function previewImage(input) {
+  if (input.files && input.files[0]) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('dropContent').style.display = 'none';
+      const img = document.getElementById('previewImg');
+      img.src = e.target.result;
+      img.style.display = 'block';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+}
+document.getElementById('detectForm').onsubmit = function() {
+  const btn = document.getElementById('submitBtn');
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+  btn.disabled = true;
+};
+const dropZone = document.getElementById('dropZone');
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.borderColor = '#16a34a'; dropZone.style.background = '#f0fdf4'; });
+dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = '#d1fae5'; dropZone.style.background = '#f9fffe'; });
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if (files.length) {
+    document.getElementById('imageInput').files = files;
+    previewImage(document.getElementById('imageInput'));
+  }
+});
+</script>
+{% endblock %}

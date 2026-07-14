@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Register – CropGuard AI{% endblock %}
+{% block guest_area %}
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#f0fdf4 0%,#dcfce7 100%);padding:20px;">
+  <div style="background:white;border-radius:20px;padding:48px;width:100%;max-width:500px;box-shadow:0 20px 60px rgba(22,163,74,0.15);border:1px solid #d1fae5;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="width:60px;height:60px;background:#16a34a;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 16px;">🌿</div>
+      <h1 style="font-size:26px;font-weight:800;color:#1a2e1a;">Create Account</h1>
+      <p style="color:#6b7280;font-size:14px;margin-top:6px;">Join CropGuard AI Platform</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+      <div class="alert alert-{{ category }}"><i class="fas fa-info-circle"></i> {{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" name="full_name" class="form-control" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="Choose username" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-control" placeholder="your@email.com" required>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="text" name="phone" class="form-control" placeholder="+91 XXXXXXXXXX">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Role</label>
+          <select name="role" class="form-control">
+            <option value="farmer">Farmer</option>
+            <option value="expert">Agriculture Expert</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Location / Village</label>
+        <input type="text" name="location" class="form-control" placeholder="District, State">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" placeholder="Create strong password" required minlength="6">
+      </div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;margin-top:8px;">
+        <i class="fas fa-user-plus"></i> Create Account
+      </button>
+    </form>
+
+    <div style="text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid #f0fdf4;">
+      <p style="font-size:14px;color:#6b7280;">Already registered? <a href="{{ url_for('login') }}" style="color:#16a34a;font-weight:600;text-decoration:none;">Login here</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

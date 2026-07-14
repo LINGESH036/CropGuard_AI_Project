@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}AI Predictions – CropGuard AI{% endblock %}
+{% block page_title %}AI Prediction & Early Warning{% endblock %}
+{% block content %}
+
+<div class="alert alert-info" style="margin-bottom:20px;">
+  <i class="fas fa-brain"></i>
+  <strong>AI Prediction Engine</strong> — Forecasts are generated using historical detection data, weather patterns, and seasonal disease models. Add more weather data and scans for higher accuracy.
+</div>
+
+<div class="grid-2" style="margin-bottom:20px;">
+  <!-- Future Predictions -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-crystal-ball" style="color:#8b5cf6;"></i> Disease Forecasts</div>
+    {% if predictions %}
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      {% for p in predictions %}
+      <div style="padding:14px;border-radius:12px;border:1px solid {% if p.risk=='high' %}#fecdd3{% elif p.risk=='medium' %}#fde68a{% else %}#bbf7d0{% endif %};background:{% if p.risk=='high' %}#fff1f2{% elif p.risk=='medium' %}#fffbeb{% else %}#f0fdf4{% endif %};">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div style="font-size:15px;font-weight:700;">{{ p.disease }}</div>
+          <span class="badge-pill badge-{{ p.risk }}">{{ p.risk|upper }}</span>
+        </div>
+        <div style="margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#6b7280;margin-bottom:4px;">
+            <span>Probability</span><span>{{ p.probability }}%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill {% if p.probability > 70 %}progress-red{% elif p.probability > 40 %}progress-yellow{% else %}progress-green{% endif %}" style="width:{{ p.probability }}%;"></div>
+          </div>
+        </div>
+        <div style="font-size:13px;color:#6b7280;"><i class="fas fa-clock"></i> {{ p.timeframe }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state" style="padding:30px 0;">
+      <i class="fas fa-brain"></i>
+      <h3>Insufficient Data</h3>
+      <p style="font-size:14px;">Record weather data and run disease scans to enable AI predictions.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Seasonal Risk Calendar -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-calendar-alt" style="color:#f59e0b;"></i> Seasonal Disease Calendar</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      {% set seasons = [
+        ('Jan–Mar', 'Winter', 'Powdery Mildew, Rust', 'low'),
+        ('Apr–Jun', 'Summer', 'Bacterial Blight, Leaf Curl', 'medium'),
+        ('Jul–Sep', 'Monsoon', 'Rice Blast, Late Blight', 'high'),
+        ('Oct–Dec', 'Post-Monsoon', 'Brown Spot, Early Blight', 'medium')
+      ] %}
+      {% for months, season, diseases, risk in seasons %}
+      <div style="display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;background:#f9fffe;border:1px solid #d1fae5;">
+        <div style="width:60px;text-align:center;font-size:11px;font-weight:700;color:#16a34a;">{{ months }}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:700;">{{ season }}</div>
+          <div style="font-size:12px;color:#6b7280;">{{ diseases }}</div>
+        </div>
+        <span class="badge-pill badge-{{ risk }}">{{ risk|upper }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- High Risk Areas + Recent Activity -->
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><i class="fas fa-map-marker-alt" style="color:#dc2626;"></i> High-Risk Area Detection</div>
+    <div style="padding:20px;background:#fff1f2;border-radius:12px;border:1px solid #fecdd3;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">🗺</div>
+      <div style="font-weight:700;margin-bottom:6px;">IoT Drone Integration</div>
+      <div style="font-size:13px;color:#6b7280;">Connect IoT sensors and drone imagery to enable real-time high-risk area mapping across your farm zones.</div>
+      <div style="margin-top:12px;padding:8px;background:white;border-radius:8px;font-size:12px;color:#6b7280;">
+        <i class="fas fa-rocket" style="color:#f59e0b;"></i> Feature coming with IoT sensor integration
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="fas fa-history" style="color:#16a34a;"></i> Recent Scan History</div>
+    {% if recent_detections %}
+    {% for d in recent_detections[:5] %}
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0fdf4;">
+      <span class="badge-pill badge-{{ d.severity }}" style="flex-shrink:0;">{{ d.severity[:1].upper() }}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ d.disease_detected }}</div>
+        <div style="font-size:12px;color:#6b7280;">{{ d.crop_type|title }} • {{ d.confidence_score }}%</div>
+      </div>
+      <div style="font-size:11px;color:#9ca3af;">{{ d.detected_at|fshort }}</div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state" style="padding:20px 0;">
+      <i class="fas fa-microscope"></i>
+      <p style="font-size:13px;">No recent scans</p>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

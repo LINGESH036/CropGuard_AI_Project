@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Add Disease – Admin{% endblock %}
+{% block page_title %}Add Disease to Database{% endblock %}
+{% block content %}
+<div style="max-width:700px;">
+<div class="card">
+  <div class="card-title"><i class="fas fa-plus-circle" style="color:#16a34a;"></i> New Disease Record</div>
+  <form method="POST">
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label">Disease Name *</label>
+        <input type="text" name="name" class="form-control" placeholder="e.g., Rice Blast" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Crop Type *</label>
+        <select name="crop_type" class="form-control" required>
+          <option value="">Select crop</option>
+          <option value="Rice">Rice</option>
+          <option value="Tomato">Tomato</option>
+          <option value="Cotton">Cotton</option>
+          <option value="Wheat">Wheat</option>
+          <option value="Maize">Maize</option>
+          <option value="Multiple">Multiple Crops</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Severity Level</label>
+      <select name="severity_level" class="form-control">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Description *</label>
+      <textarea name="description" class="form-control" rows="3" placeholder="Overview of the disease..." required></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Causes</label>
+      <textarea name="causes" class="form-control" rows="3" placeholder="What causes this disease? Environmental factors, pathogens..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Symptoms</label>
+      <textarea name="symptoms" class="form-control" rows="3" placeholder="Visual symptoms, signs on leaves, stems, fruits..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Chemical Treatment</label>
+      <textarea name="chemical_treatment" class="form-control" rows="3" placeholder="Fungicides, pesticides with dosage..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Organic Treatment</label>
+      <textarea name="organic_treatment" class="form-control" rows="3" placeholder="Natural, eco-friendly methods..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prevention Guidelines</label>
+      <textarea name="prevention" class="form-control" rows="3" placeholder="Preventive measures, best practices..."></textarea>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Disease</button>
+      <a href="{{ url_for('admin') }}" class="btn btn-outline"><i class="fas fa-times"></i> Cancel</a>
+    </div>
+  </form>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Analytics – CropGuard AI{% endblock %}
+{% block page_title %}Crop Health Analytics{% endblock %}
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="stat-grid">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-seedling"></i></div>
+    <div><div class="stat-val">{{ total_crops }}</div><div class="stat-label">Total Crops Tracked</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-microscope"></i></div>
+    <div><div class="stat-val">{{ all_detections|length }}</div><div class="stat-label">Total Scans</div></div>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px;">
+  <div class="card">
+    <div class="card-title"><i class="fas fa-chart-pie" style="color:#16a34a;"></i> Disease Distribution</div>
+    <canvas id="diseaseChart" height="220"></canvas>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="fas fa-chart-bar" style="color:#f59e0b;"></i> Severity Breakdown</div>
+    <canvas id="severityChart" height="220"></canvas>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><i class="fas fa-chart-line" style="color:#3b82f6;"></i> Detection Trend</div>
+  <canvas id="trendChart" height="120"></canvas>
+</div>
+
+<script>
+const diseaseCounts = {{ disease_counts|tojson }};
+const severityCounts = {{ severity_counts|tojson }};
+const monthly = {{ monthly|tojson }};
+
+// Disease pie
+new Chart(document.getElementById('diseaseChart'), {
+  type: 'doughnut',
+  data: {
+    labels: Object.keys(diseaseCounts),
+    datasets: [{ data: Object.values(diseaseCounts), backgroundColor: ['#16a34a','#f59e0b','#dc2626','#3b82f6','#8b5cf6','#06b6d4'], borderWidth: 0 }]
+  },
+  options: { plugins: { legend: { position: 'bottom' } }, cutout: '60%' }
+});
+
+// Severity bar
+new Chart(document.getElementById('severityChart'), {
+  type: 'bar',
+  data: {
+    labels: ['High', 'Medium', 'Low', 'None'],
+    datasets: [{ data: [severityCounts.high||0, severityCounts.medium||0, severityCounts.low||0, severityCounts.none||0],
+      backgroundColor: ['#dc2626','#f59e0b','#16a34a','#3b82f6'], borderRadius: 6 }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+
+// Monthly trend
+new Chart(document.getElementById('trendChart'), {
+  type: 'line',
+  data: {
+    labels: Object.keys(monthly),
+    datasets: [{ label: 'Detections', data: Object.values(monthly), borderColor: '#16a34a', backgroundColor: 'rgba(22,163,74,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#16a34a' }]
+  },
+  options: { scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+{% endblock %}

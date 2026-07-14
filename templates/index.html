@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CropGuard AI – Smart Crop Disease Detection</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --g1: #0f2415; --g2: #1a3d20; --g3: #16a34a;
+      --accent: #4ade80; --gold: #fbbf24;
+      --text: #f0fdf4; --muted: #86efac;
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Outfit',sans-serif; background:var(--g1); color:var(--text); overflow-x:hidden; }
+    .hero {
+      min-height:100vh; display:flex; flex-direction:column;
+      background: radial-gradient(ellipse at 20% 50%, #1a4a25 0%, #0f2415 50%, #0a1a0d 100%);
+      position:relative; overflow:hidden;
+    }
+    .hero::before {
+      content:''; position:absolute; inset:0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2316a34a' fill-opacity='0.04'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .nav {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:20px 60px; position:relative; z-index:10;
+    }
+    .nav-logo { display:flex; align-items:center; gap:12px; }
+    .logo-box { width:44px; height:44px; background:var(--g3); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px; }
+    .logo-name { font-size:22px; font-weight:800; color:white; }
+    .logo-tag { font-size:10px; color:var(--muted); letter-spacing:2px; text-transform:uppercase; }
+    .nav-links { display:flex; gap:8px; }
+    .nav-btn {
+      padding:10px 22px; border-radius:10px; font-family:'Outfit',sans-serif;
+      font-size:14px; font-weight:600; cursor:pointer; text-decoration:none; transition:all 0.2s;
+    }
+    .nav-login { background:rgba(255,255,255,0.08); color:white; border:1px solid rgba(255,255,255,0.15); }
+    .nav-login:hover { background:rgba(255,255,255,0.15); }
+    .nav-register { background:var(--g3); color:white; border:none; }
+    .nav-register:hover { background:#15803d; transform:translateY(-1px); }
+
+    .hero-body {
+      flex:1; display:flex; align-items:center; justify-content:center;
+      padding:40px 60px; gap:80px;
+    }
+    .hero-left { max-width:560px; }
+    .hero-tag {
+      display:inline-flex; align-items:center; gap:8px;
+      background:rgba(74,222,128,0.1); border:1px solid rgba(74,222,128,0.2);
+      color:var(--accent); padding:7px 16px; border-radius:20px; font-size:13px; font-weight:600;
+      margin-bottom:28px;
+    }
+    .hero-tag span { width:8px; height:8px; background:var(--accent); border-radius:50%; animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+    h1 { font-size:62px; font-weight:900; line-height:1.05; margin-bottom:24px; }
+    h1 .highlight { color:var(--accent); }
+    .hero-desc { font-size:18px; color:var(--muted); line-height:1.7; margin-bottom:40px; }
+    .hero-btns { display:flex; gap:12px; flex-wrap:wrap; }
+    .btn-hero-main {
+      padding:16px 36px; background:var(--g3); color:white;
+      border-radius:14px; font-family:'Outfit',sans-serif; font-size:16px; font-weight:700;
+      text-decoration:none; display:inline-flex; align-items:center; gap:10px;
+      transition:all 0.2s;
+    }
+    .btn-hero-main:hover { background:#15803d; transform:translateY(-2px); box-shadow:0 8px 24px rgba(22,163,74,0.4); }
+    .btn-hero-sec {
+      padding:16px 36px; background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.15); color:white;
+      border-radius:14px; font-family:'Outfit',sans-serif; font-size:16px; font-weight:600;
+      text-decoration:none; display:inline-flex; align-items:center; gap:10px; transition:all 0.2s;
+    }
+    .btn-hero-sec:hover { background:rgba(255,255,255,0.12); }
+    .hero-stats { display:flex; gap:32px; margin-top:48px; }
+    .h-stat-num { font-size:30px; font-weight:800; color:white; }
+    .h-stat-lbl { font-size:12px; color:var(--muted); margin-top:2px; }
+
+    .hero-right { flex-shrink:0; }
+    .feature-card-stack { position:relative; width:380px; }
+    .f-card {
+      background:rgba(255,255,255,0.06); backdrop-filter:blur(20px);
+      border:1px solid rgba(255,255,255,0.1); border-radius:20px; padding:20px 24px;
+      margin-bottom:12px;
+    }
+    .f-card-head { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+    .f-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:18px; }
+    .f-title { font-size:15px; font-weight:700; }
+    .f-sub { font-size:13px; color:var(--muted); }
+    .confidence-bar { background:rgba(255,255,255,0.1); border-radius:4px; height:8px; margin-top:10px; }
+    .confidence-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,#16a34a,#4ade80); }
+    .f-badge { display:inline-flex; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-top:8px; }
+    .badge-red { background:rgba(220,38,38,0.2); color:#f87171; }
+    .badge-green { background:rgba(22,163,74,0.2); color:var(--accent); }
+
+    /* FEATURES SECTION */
+    .features { padding:100px 60px; background:var(--g1); }
+    .section-tag { text-align:center; color:var(--accent); font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; margin-bottom:16px; }
+    .section-title { text-align:center; font-size:42px; font-weight:800; margin-bottom:60px; }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; max-width:1100px; margin:0 auto; }
+    .feat-card {
+      background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+      border-radius:20px; padding:28px;
+      transition:all 0.3s;
+    }
+    .feat-card:hover { background:rgba(255,255,255,0.07); transform:translateY(-4px); border-color:rgba(74,222,128,0.3); }
+    .feat-icon { font-size:32px; margin-bottom:16px; }
+    .feat-title { font-size:17px; font-weight:700; margin-bottom:10px; }
+    .feat-desc { font-size:14px; color:var(--muted); line-height:1.6; }
+
+    /* TECH STACK */
+    .tech { padding:60px; background:rgba(255,255,255,0.02); border-top:1px solid rgba(255,255,255,0.06); }
+    .tech-inner { max-width:900px; margin:0 auto; text-align:center; }
+    .tech-title { font-size:14px; color:var(--muted); margin-bottom:32px; text-transform:uppercase; letter-spacing:2px; }
+    .tech-pills { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; }
+    .tech-pill {
+      padding:8px 20px; background:rgba(255,255,255,0.06);
+      border:1px solid rgba(255,255,255,0.1); border-radius:20px;
+      font-size:14px; color:var(--muted); font-weight:500;
+    }
+    .tech-pill i { color:var(--accent); margin-right:6px; }
+
+    /* FOOTER */
+    footer { padding:28px 60px; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; }
+    .footer-copy { font-size:13px; color:var(--muted); }
+
+    @media(max-width:900px) {
+      .nav { padding:16px 20px; }
+      .hero-body { flex-direction:column; padding:20px; gap:40px; }
+      h1 { font-size:40px; }
+      .hero-right { display:none; }
+      .features { padding:60px 20px; }
+      .features-grid { grid-template-columns:1fr; }
+      footer { flex-direction:column; gap:8px; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <nav class="nav">
+    <div class="nav-logo">
+      <div class="logo-box">🌿</div>
+      <div>
+        <div class="logo-name">CropGuard AI</div>
+        <div class="logo-tag">Smart Farming</div>
+      </div>
+    </div>
+    <div class="nav-links">
+      <a href="{{ url_for('login') }}" class="nav-btn nav-login">Login</a>
+      <a href="{{ url_for('register') }}" class="nav-btn nav-register">Get Started Free</a>
+    </div>
+  </nav>
+
+  <div class="hero-body">
+    <div class="hero-left">
+      <div class="hero-tag">
+        <span></span> Powered by Deep Learning CNN
+      </div>
+      <h1>Protect Your Crops with <span class="highlight">AI Intelligence</span></h1>
+      <p class="hero-desc">Upload a leaf image and get instant disease detection with 90%+ accuracy. Get treatment recommendations, weather-based risk alerts, and expert consultation — all in one platform.</p>
+      <div class="hero-btns">
+        <a href="{{ url_for('register') }}" class="btn-hero-main">
+          <i class="fas fa-rocket"></i> Start Detecting Free
+        </a>
+        <a href="{{ url_for('login') }}" class="btn-hero-sec">
+          <i class="fas fa-sign-in-alt"></i> Login
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="h-stat-num">15+</div>
+          <div class="h-stat-lbl">Disease Types</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.1)"></div>
+        <div>
+          <div class="h-stat-num">90%+</div>
+          <div class="h-stat-lbl">AI Accuracy</div>
+        </div>
+        <div style="width:1px;background:rgba(255,255,255,0.1)"></div>
+        <div>
+          <div class="h-stat-num">6+</div>
+          <div class="h-stat-lbl">Crop Types</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="feature-card-stack">
+        <div class="f-card">
+          <div class="f-card-head">
+            <div class="f-icon" style="background:rgba(239,68,68,0.2)">🔬</div>
+            <div>
+              <div class="f-title">Disease Detected</div>
+              <div class="f-sub">Rice Blast – Magnaporthe oryzae</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--muted)">Confidence Score</div>
+          <div class="confidence-bar"><div class="confidence-fill" style="width:88%"></div></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:4px;color:var(--muted)">
+            <span>88.5% confidence</span><span class="f-badge badge-red">High Severity</span>
+          </div>
+        </div>
+        <div class="f-card">
+          <div class="f-card-head">
+            <div class="f-icon" style="background:rgba(22,163,74,0.2)">💊</div>
+            <div>
+              <div class="f-title">Treatment Plan Ready</div>
+              <div class="f-sub">Chemical + Organic options</div>
+            </div>
+          </div>
+          <div style="font-size:13px;color:var(--muted)">Tricyclazole 0.6g/L • Neem extract spray</div>
+          <div class="f-badge badge-green">✓ Recommendation Generated</div>
+        </div>
+        <div class="f-card">
+          <div class="f-card-head">
+            <div class="f-icon" style="background:rgba(251,191,36,0.2)">🌤</div>
+            <div>
+              <div class="f-title">Weather Risk Alert</div>
+              <div class="f-sub">High humidity detected</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:12px;margin-top:4px;">
+            <span style="font-size:13px;color:var(--muted)">🌡 28°C</span>
+            <span style="font-size:13px;color:var(--muted)">💧 85% RH</span>
+            <span class="f-badge badge-red">High Risk</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="section-tag">Everything You Need</div>
+  <div class="section-title">Complete Crop Protection Platform</div>
+  <div class="features-grid">
+    <div class="feat-card">
+      <div class="feat-icon">🤖</div>
+      <div class="feat-title">AI Disease Detection</div>
+      <div class="feat-desc">Upload leaf photos for instant CNN-powered disease identification with confidence scores and severity ratings.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">💊</div>
+      <div class="feat-title">Treatment Recommendations</div>
+      <div class="feat-desc">Get both chemical and organic treatment options with dosage details and prevention guidelines.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🌦</div>
+      <div class="feat-title">Weather-Based Risk</div>
+      <div class="feat-desc">Monitor temperature and humidity. Get automatic disease risk predictions based on weather conditions.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">📊</div>
+      <div class="feat-title">Crop Analytics</div>
+      <div class="feat-desc">Visual dashboards showing disease trends, historical analysis, and crop health status over time.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">👨‍🌾</div>
+      <div class="feat-title">Expert Consultation</div>
+      <div class="feat-desc">Direct messaging with certified agriculture experts for personalized advice and recommendations.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon">🔮</div>
+      <div class="feat-title">Early Warning System</div>
+      <div class="feat-desc">AI-powered future disease predictions, high-risk area detection, and seasonal disease forecasting.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<div class="tech">
+  <div class="tech-inner">
+    <div class="tech-title">Built with Professional Technologies</div>
+    <div class="tech-pills">
+      <span class="tech-pill"><i class="fab fa-python"></i>Python Flask</span>
+      <span class="tech-pill"><i class="fas fa-database"></i>SQLite</span>
+      <span class="tech-pill"><i class="fab fa-html5"></i>HTML5 / CSS3</span>
+      <span class="tech-pill"><i class="fas fa-brain"></i>CNN Deep Learning</span>
+      <span class="tech-pill"><i class="fas fa-cloud"></i>Weather API</span>
+      <span class="tech-pill"><i class="fas fa-mobile-alt"></i>Responsive Design</span>
+      <span class="tech-pill"><i class="fas fa-lock"></i>Secure Auth</span>
+      <span class="tech-pill"><i class="fas fa-chart-pie"></i>Chart.js Analytics</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">© 2024 CropGuard AI • Built for Resume Portfolio</div>
+  <div style="font-size:13px;color:var(--muted)">
+    <a href="{{ url_for('login') }}" style="color:var(--accent);text-decoration:none;margin-left:16px">Login</a>
+    <a href="{{ url_for('register') }}" style="color:var(--accent);text-decoration:none;margin-left:16px">Register</a>
+  </div>
+</footer>
+
+</body>
+</html>

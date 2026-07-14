@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Weather Monitor – CropGuard AI{% endblock %}
+{% block page_title %}Weather Monitoring{% endblock %}
+{% block content %}
+<div class="grid-2">
+  <div class="card">
+    <div class="card-title"><i class="fas fa-cloud-sun" style="color:#f59e0b;"></i> Log Weather Data</div>
+    <form method="POST">
+      <div class="form-group">
+        <label class="form-label">Location</label>
+        <input type="text" name="location" class="form-control" placeholder="Farm / Field name" required>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Temperature (°C)</label>
+          <input type="number" name="temperature" class="form-control" step="0.1" id="tempIn" placeholder="25.0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Humidity (%)</label>
+          <input type="number" name="humidity" class="form-control" step="0.1" id="humIn" placeholder="65">
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label">Rainfall (mm)</label>
+          <input type="number" name="rainfall" class="form-control" step="0.1" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Wind Speed (km/h)</label>
+          <input type="number" name="wind_speed" class="form-control" step="0.1" placeholder="10">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save</button>
+        <button type="button" class="btn btn-outline" onclick="simulateWeather()"><i class="fas fa-magic"></i> Auto-Fill</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="fas fa-info-circle" style="color:#3b82f6;"></i> Disease Risk Guide</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="padding:14px;background:#fee2e2;border-radius:10px;border-left:4px solid #dc2626;">
+        <div style="font-weight:700;color:#dc2626;margin-bottom:4px;">🔴 HIGH RISK</div>
+        <div style="font-size:13px;color:#7f1d1d;">Humidity &gt; 80% AND Temperature &gt; 25°C — Ideal conditions for fungal diseases. Immediate monitoring required.</div>
+      </div>
+      <div style="padding:14px;background:#fef3c7;border-radius:10px;border-left:4px solid #f59e0b;">
+        <div style="font-weight:700;color:#d97706;margin-bottom:4px;">🟡 MEDIUM RISK</div>
+        <div style="font-size:13px;color:#78350f;">Humidity &gt; 65% OR Temperature &gt; 30°C — Monitor crops closely for early signs.</div>
+      </div>
+      <div style="padding:14px;background:#dcfce7;border-radius:10px;border-left:4px solid #16a34a;">
+        <div style="font-weight:700;color:#16a34a;margin-bottom:4px;">🟢 LOW RISK</div>
+        <div style="font-size:13px;color:#14532d;">Current conditions are not favorable for disease development.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% if history %}
+<div class="card" style="margin-top:20px;">
+  <div class="card-title"><i class="fas fa-history" style="color:#16a34a;"></i> Weather History</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Location</th><th>Temp (°C)</th><th>Humidity (%)</th><th>Rainfall (mm)</th><th>Wind (km/h)</th><th>Disease Risk</th><th>Recorded</th></tr>
+      </thead>
+      <tbody>
+        {% for w in history %}
+        <tr>
+          <td>{{ w.location }}</td>
+          <td>{{ w.temperature }}</td>
+          <td>{{ w.humidity }}</td>
+          <td>{{ w.rainfall }}</td>
+          <td>{{ w.wind_speed }}</td>
+          <td><span class="badge-pill badge-{{ w.disease_risk }}">{{ w.disease_risk|upper }}</span></td>
+          <td style="font-size:13px;color:#6b7280;">{{ w.recorded_at|fshort }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+<script>
+async function simulateWeather() {
+  try {
+    const r = await fetch('/api/weather/simulate');
+    const d = await r.json();
+    document.getElementById('tempIn').value = d.temperature;
+    document.getElementById('humIn').value = d.humidity;
+    document.querySelectorAll('input[name=rainfall]')[0].value = d.rainfall;
+    document.querySelectorAll('input[name=wind_speed]')[0].value = d.wind_speed;
+  } catch(e) { alert('Could not simulate weather.'); }
+}
+</script>
+{% endblock %}

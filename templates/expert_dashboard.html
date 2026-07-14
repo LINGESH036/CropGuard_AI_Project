@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Expert Panel – CropGuard AI{% endblock %}
+{% block page_title %}Expert Dashboard{% endblock %}
+{% block content %}
+<div class="stat-grid" style="margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dbeafe;color:#3b82f6;"><i class="fas fa-envelope-open"></i></div>
+    <div><div class="stat-val">{{ queries|length }}</div><div class="stat-label">Open Queries</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-check-circle"></i></div>
+    <div><div class="stat-val">{{ answered }}</div><div class="stat-label">Answered</div></div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-title"><i class="fas fa-inbox" style="color:#3b82f6;"></i> Farmer Queries – Awaiting Response</div>
+  {% if queries %}
+  <div style="display:flex;flex-direction:column;gap:16px;">
+    {% for q in queries %}
+    <div style="padding:18px;border-radius:12px;border:1px solid #d1fae5;background:#f9fffe;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div>
+          <div style="font-size:15px;font-weight:700;">{{ q.subject }}</div>
+          <div style="font-size:13px;color:#6b7280;margin-top:2px;">From: Farmer #{{ q.farmer_id }} &nbsp;•&nbsp; {{ q.created_at|fdt }}</div>
+        </div>
+        <span class="badge-pill badge-medium">OPEN</span>
+      </div>
+      <p style="font-size:14px;color:#374151;line-height:1.6;margin-bottom:14px;">{{ q.message }}</p>
+      <form method="POST" action="{{ url_for('reply_query', query_id=q.id) }}">
+        <div class="form-group">
+          <label class="form-label">Your Expert Response</label>
+          <textarea name="response" class="form-control" rows="3" placeholder="Provide detailed advice to the farmer..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-reply"></i> Send Response</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <i class="fas fa-check-circle" style="color:#16a34a;"></i>
+    <h3>All Caught Up!</h3>
+    <p>No open farmer queries at the moment.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

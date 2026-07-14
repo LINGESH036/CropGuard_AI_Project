@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block title %}Admin Panel – CropGuard AI{% endblock %}
+{% block page_title %}Admin Panel{% endblock %}
+{% block content %}
+
+<div class="stat-grid" style="margin-bottom:24px;">
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dbeafe;color:#3b82f6;"><i class="fas fa-users"></i></div>
+    <div><div class="stat-val">{{ total_users }}</div><div class="stat-label">Total Users</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#dcfce7;color:#16a34a;"><i class="fas fa-seedling"></i></div>
+    <div><div class="stat-val">{{ total_crops }}</div><div class="stat-label">Total Crops</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#fef3c7;color:#d97706;"><i class="fas fa-microscope"></i></div>
+    <div><div class="stat-val">{{ total_detections }}</div><div class="stat-label">Total Detections</div></div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon" style="background:#f3e8ff;color:#8b5cf6;"><i class="fas fa-book-medical"></i></div>
+    <div><div class="stat-val">{{ total_diseases }}</div><div class="stat-label">Disease Records</div></div>
+  </div>
+</div>
+
+<div class="grid-2" style="margin-bottom:20px;">
+  <!-- Quick Admin Actions -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-tools" style="color:#f59e0b;"></i> Admin Actions</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <a href="{{ url_for('add_disease') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Disease to Database</a>
+      <a href="{{ url_for('report') }}" class="btn btn-outline"><i class="fas fa-file-csv"></i> Export Detection Report (CSV)</a>
+      <a href="{{ url_for('diseases') }}" class="btn btn-outline"><i class="fas fa-book-medical"></i> Manage Disease Library</a>
+      <a href="{{ url_for('expert_dashboard') }}" class="btn btn-outline"><i class="fas fa-user-md"></i> Expert Panel</a>
+    </div>
+  </div>
+
+  <!-- Recent Detections -->
+  <div class="card">
+    <div class="card-title"><i class="fas fa-chart-line" style="color:#16a34a;"></i> Recent Activity</div>
+    {% for d in recent_detections %}
+    <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #f0fdf4;">
+      <span class="badge-pill badge-{{ d.severity }}" style="flex-shrink:0;font-size:10px;">{{ d.severity[:1].upper() }}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ d.disease_detected }}</div>
+        <div style="font-size:11px;color:#6b7280;">User #{{ d.user_id }} • {{ d.crop_type|title }}</div>
+      </div>
+      <div style="font-size:11px;color:#9ca3af;flex-shrink:0;">{{ d.detected_at|fshort }}</div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- User Management -->
+<div class="card">
+  <div class="card-title"><i class="fas fa-users-cog" style="color:#3b82f6;"></i> User Management</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Action</th></tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td style="font-weight:600;">{{ user.full_name or '—' }}</td>
+          <td><code style="background:#f0fdf4;padding:2px 6px;border-radius:4px;font-size:13px;">{{ user.username }}</code></td>
+          <td style="font-size:13px;color:#6b7280;">{{ user.email }}</td>
+          <td>
+            <span class="badge-pill {% if user.role=='admin' %}badge-high{% elif user.role=='expert' %}badge-info{% else %}badge-none{% endif %}">
+              {{ user.role|upper }}
+            </span>
+          </td>
+          <td>
+            <span id="status-{{ user.id }}" class="badge-pill {% if user.is_active %}badge-none{% else %}badge-high{% endif %}">
+              {{ 'ACTIVE' if user.is_active else 'DISABLED' }}
+            </span>
+          </td>
+          <td style="font-size:13px;color:#6b7280;">{{ user.created_at|fdate }}</td>
+          <td>
+            {% if user.role != 'admin' %}
+            <button class="btn btn-sm {% if user.is_active %}btn-danger{% else %}btn-primary{% endif %}"
+                    onclick="toggleUser({{ user.id }}, this)">
+              {{ 'Disable' if user.is_active else 'Enable' }}
+            </button>
+            {% else %}
+            <span style="font-size:12px;color:#9ca3af;">Protected</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function toggleUser(userId, btn) {
+  try {
+    const r = await fetch(`/admin/user/${userId}/toggle`, { method: 'POST' });
+    const d = await r.json();
+    const statusEl = document.getElementById(`status-${userId}`);
+    const isActive = d.status === 'active';
+    statusEl.textContent = isActive ? 'ACTIVE' : 'DISABLED';
+    statusEl.className = `badge-pill ${isActive ? 'badge-none' : 'badge-high'}`;
+    btn.textContent = isActive ? 'Disable' : 'Enable';
+    btn.className = `btn btn-sm ${isActive ? 'btn-danger' : 'btn-primary'}`;
+  } catch(e) { alert('Error updating user.'); }
+}
+</script>
+{% endblock %}
